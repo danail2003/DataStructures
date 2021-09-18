@@ -8,18 +8,6 @@
     {
         private Node<T> _head;
 
-        public Queue()
-        {
-            this._head = null;
-            this.Count = 0;
-        }
-
-        public Queue(Node<T> _head)
-        {
-            this._head = _head;
-            this.Count = 1;
-        }
-
         public int Count { get; private set; }
 
         public bool Contains(T item)
@@ -46,12 +34,12 @@
                 throw new InvalidOperationException();
             }
 
-            T cuurent = this._head.Value;
+            T current = this._head.Value;
             this._head = this._head.Next;
 
             this.Count--;
 
-            return cuurent;
+            return current;
         }
 
         public void Enqueue(T item)

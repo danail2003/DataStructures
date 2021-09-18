@@ -7,42 +7,128 @@
     public class SinglyLinkedList<T> : IAbstractLinkedList<T>
     {
         private Node<T> _head;
+        private int size;
 
-        public int Count { get; private set; }
+        public int Count => this.size;
 
         public void AddFirst(T item)
         {
-            throw new NotImplementedException();
+            Node<T> newNode = new Node<T>(item);
+
+            if (this._head != null)
+            {
+                newNode.Next = this._head;
+            }
+
+            this._head = newNode;
+            this.size++;
         }
 
         public void AddLast(T item)
         {
-            throw new NotImplementedException();
+            Node<T> newNode = new Node<T>(item);
+
+            if (this._head == null)
+            {
+                this._head = newNode;
+            }
+            else
+            {
+                Node<T> current = this._head;
+
+                while (current.Next != null)
+                {
+                    current = current.Next;
+                }
+
+                current.Next = newNode;
+            }
+
+            this.size++;
         }
 
         public T GetFirst()
         {
-            throw new NotImplementedException();
+            if (this._head == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            return this._head.Value;
         }
 
         public T GetLast()
         {
-            throw new NotImplementedException();
+            if (this._head == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            Node<T> current = this._head;
+
+            while (current.Next != null)
+            {
+                current = current.Next;
+            }
+
+            return current.Value;
         }
 
         public T RemoveFirst()
         {
-            throw new NotImplementedException();
+            if (this._head == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            T current = this._head.Value;
+            this._head = this._head.Next;
+
+            this.size--;
+
+            return current;
         }
 
         public T RemoveLast()
         {
-            throw new NotImplementedException();
+            if (this._head == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            Node<T> current = this._head;
+
+            if (current.Next == null)
+            {
+                T returnedValue = current.Value;
+                current = default;
+                this.size--;
+
+                return returnedValue;
+            }
+
+            for (int i = 0; i < this.size - 2; i++)
+            {
+                current = current.Next;
+            }
+
+            T oldValue = current.Next.Value;
+            current.Next = default;
+
+            this.size--;
+
+            return oldValue;
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            throw new NotImplementedException();
+            Node<T> current = this._head;
+
+            while (current != null)
+            {
+                yield return current.Value;
+                current = current.Next;
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()
