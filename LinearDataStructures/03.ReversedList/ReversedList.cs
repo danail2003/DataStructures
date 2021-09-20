@@ -9,7 +9,6 @@
         private const int DefaultCapacity = 4;
 
         private T[] _items;
-        private int _size;
 
         public ReversedList()
             : this(DefaultCapacity) { }
@@ -36,18 +35,26 @@
 
                 if (this.Count == 0)
                 {
-                    this._items[this._items.Length - 1] = value;
-                    this._size++;
+                    this._items[0] = value;
                 }
                 else
                 {
-                    this._size++;
-                    this._items[this._items.Length - this.Count] = value;
+                    if (index == 0)
+                    {
+                        this._items[index] = value;
+                    }
+                    else
+                    {
+                        for (int i = index - 1; i < index; i++)
+                        {
+                            this._items[index - i - 1] = value;
+                        }
+                    }
                 }
             }
         }
 
-        public int Count => this._size;
+        public int Count { get; set; }
 
         public void Add(T item)
         {
@@ -70,7 +77,7 @@
                 this._items[0] = item;
             }
 
-            this._size++;
+            this.Count++;
         }
 
         public bool Contains(T item)
@@ -102,18 +109,65 @@
         public void Insert(int index, T item)
         {
             this.ValidateIndex(index);
-            throw new NotImplementedException();
+
+            if (this.Count == this._items.Length)
+            {
+                this._items = this.Resize();
+            }
+
+            if (index == this.Count)
+            {
+                this._items[index] = item;
+            }
+            else
+            {
+                for (int i = 0; i < this.Count - index; i++)
+                {
+                    this._items[this.Count - i] = this._items[this.Count - i - 1];
+                }
+
+                this._items[index] = item;
+            }
+
+            this.Count++;
         }
 
         public bool Remove(T item)
         {
-            throw new NotImplementedException();
+            int index = 0;
+            bool isFound = false;
+
+            for (int i = 0; i < this.Count; i++)
+            {
+                if (item.Equals(this._items[i]))
+                {
+                    index = i;
+                    this._items[i] = default;
+                    this.Count--;
+                    isFound = true;
+                    break;
+                }
+            }
+
+            for (int i = 0; i < this.Count - index; i++)
+            {
+                this._items[index + i] = this._items[index + i + 1];
+            }
+
+            return isFound;
         }
 
         public void RemoveAt(int index)
         {
             this.ValidateIndex(index);
-            throw new NotImplementedException();
+
+            this._items[index] = default;
+            this.Count--;
+
+            for (int i = 0; i < this.Count - index; i++)
+            {
+                this._items[index + i] = this._items[index + i + 1];
+            }
         }
 
         public IEnumerator<T> GetEnumerator()
