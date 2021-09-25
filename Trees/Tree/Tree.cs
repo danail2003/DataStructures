@@ -92,13 +92,14 @@
 
             Tree<T> parentNode = currentNode.Parent;
             
-            if (parentNode is null)
+            if (parentNode == null)
             {
                 IsRootDeleted = true;
             }
             else
             {
                 parentNode._children.Remove(currentNode);
+                currentNode.Parent = null;
             }
 
             currentNode.Value = default;
@@ -106,7 +107,35 @@
 
         public void Swap(T firstKey, T secondKey)
         {
-            throw new NotImplementedException();
+            Tree<T> firstNode = this.FindBfs(firstKey);
+            Tree<T> secondNode = this.FindBfs(secondKey);
+
+            this.CheckEmptyNode(firstNode);
+            this.CheckEmptyNode(secondNode);
+
+            Tree<T> firstParent = firstNode.Parent;
+            Tree<T> secondParent = secondNode.Parent;
+
+            if (firstParent == null)
+            {
+                this.SwapRoot(secondNode);
+                return;
+            }
+
+            if (secondParent == null)
+            {
+                this.SwapRoot(firstNode);
+                return;
+            }
+
+            firstNode.Parent = secondParent;
+            secondNode.Parent = firstParent;
+
+            int indexOfFirst = firstParent._children.IndexOf(firstNode);
+            int indexOfSecond = secondParent._children.IndexOf(secondNode);
+
+            firstParent._children[indexOfFirst] = secondNode;
+            secondParent._children[indexOfSecond] = firstNode;
         }
 
         private void Dfs(Tree<T> tree, List<T> result)
@@ -144,9 +173,20 @@
 
         private void CheckEmptyNode(Tree<T> node)
         {
-            if (node is null)
+            if (node == null)
             {
                 throw new ArgumentNullException();
+            }
+        }
+
+        private void SwapRoot(Tree<T> node)
+        {
+            this.Value = node.Value;
+            this._children.Clear();
+
+            foreach (var child in node.Children)
+            {
+                this._children.Add(child);
             }
         }
     }
