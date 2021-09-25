@@ -28,12 +28,19 @@
 
         public Tree<T> Parent { get; private set; }
 
+        public bool IsRootDeleted { get; private set; }
+
         public IReadOnlyCollection<Tree<T>> Children => this._children.AsReadOnly();
 
         public ICollection<T> OrderBfs()
         {
             List<T> result = new List<T>();
             Queue<Tree<T>> queue = new Queue<Tree<T>>();
+
+            if (IsRootDeleted)
+            {
+                return result;
+            }
 
             queue.Enqueue(this);
 
@@ -63,12 +70,38 @@
 
         public void AddChild(T parentKey, Tree<T> child)
         {
-            throw new NotImplementedException();
+            Tree<T> parent = this.FindBfs(parentKey);
+
+            this.CheckEmptyNode(parent);
+
+            parent._children.Add(child);
         }
 
         public void RemoveNode(T nodeKey)
         {
-            throw new NotImplementedException();
+            Tree<T> currentNode = this.FindBfs(nodeKey);
+
+            this.CheckEmptyNode(currentNode);
+
+            foreach (var child in currentNode.Children)
+            {
+                child.Parent = null;
+            }
+
+            currentNode._children.Clear();
+
+            Tree<T> parentNode = currentNode.Parent;
+            
+            if (parentNode is null)
+            {
+                IsRootDeleted = true;
+            }
+            else
+            {
+                parentNode._children.Remove(currentNode);
+            }
+
+            currentNode.Value = default;
         }
 
         public void Swap(T firstKey, T secondKey)
@@ -84,6 +117,37 @@
             }
 
             result.Add(tree.Value);
+        }
+
+        private Tree<T> FindBfs(T parent)
+        {
+            Queue<Tree<T>> queue = new Queue<Tree<T>>();
+            queue.Enqueue(this);
+
+            while (queue.Count > 0)
+            {
+                Tree<T> subTree = queue.Dequeue();
+
+                if (subTree.Value.Equals(parent))
+                {
+                    return subTree;
+                }
+
+                foreach (var child in subTree.Children)
+                {
+                    queue.Enqueue(child);
+                }
+            }
+
+            return null;
+        }
+
+        private void CheckEmptyNode(Tree<T> node)
+        {
+            if (node is null)
+            {
+                throw new ArgumentNullException();
+            }
         }
     }
 }
