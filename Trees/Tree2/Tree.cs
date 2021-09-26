@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Text;
 
     public class Tree<T> : IAbstractTree<T>
     {
@@ -9,7 +10,14 @@
 
         public Tree(T key, params Tree<T>[] children)
         {
-            throw new NotImplementedException();
+            this.Key = key;
+            this._children = new List<Tree<T>>();
+
+            foreach (var child in children)
+            {
+                this.AddChild(child);
+                this.Parent = this;
+            }
         }
 
         public T Key { get; private set; }
@@ -22,17 +30,21 @@
 
         public void AddChild(Tree<T> child)
         {
-            throw new NotImplementedException();
+            this._children.Add(child);
         }
 
         public void AddParent(Tree<T> parent)
         {
-            throw new NotImplementedException();
+            this.Parent = parent;
         }
 
         public string GetAsString()
         {
-            throw new NotImplementedException();
+            StringBuilder sb = new StringBuilder();
+
+            this.Dfs(this, sb, 0);
+
+            return sb.ToString().Trim();
         }
 
         public Tree<T> GetDeepestLeftomostNode()
@@ -63,6 +75,16 @@
         public List<Tree<T>> SubTreesWithGivenSum(int sum)
         {
             throw new NotImplementedException();
+        }
+
+        private void Dfs(Tree<T> tree, StringBuilder sb, int depth)
+        {
+            sb.Append(new string(' ', depth)).Append(tree.Key).Append(Environment.NewLine);
+
+            foreach (var child in tree.Children)
+            {
+                this.Dfs(child, sb, depth + 2);
+            }
         }
     }
 }
