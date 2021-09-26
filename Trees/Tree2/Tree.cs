@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
 
     public class Tree<T> : IAbstractTree<T>
@@ -49,22 +50,72 @@
 
         public Tree<T> GetDeepestLeftomostNode()
         {
-            throw new NotImplementedException();
+            List<Tree<T>> nodes = this.OrderBfs(this);
+
+            int deepestNodeDepth = 0;
+            Tree<T> deepestNode = null;
+
+            foreach (var node in nodes)
+            {
+                int depth = this.GetDepthOfNode(node);
+
+                if (depth > deepestNodeDepth)
+                {
+                    deepestNode = node;
+                    deepestNodeDepth = depth;
+                }
+            }
+
+            return deepestNode;
         }
 
         public List<T> GetLeafKeys()
         {
-            throw new NotImplementedException();
+            List<T> result = new List<T>();
+
+            this.Bfs(this, result);
+
+            return result;
         }
 
         public List<T> GetMiddleKeys()
         {
-            throw new NotImplementedException();
+            List<T> result = new List<T>();
+            Queue<Tree<T>> queue = new Queue<Tree<T>>();
+
+            queue.Enqueue(this);
+
+            while (queue.Count > 0)
+            {
+                Tree<T> subTree = queue.Dequeue();
+
+                if(subTree.Children.Count != 0 && subTree.Parent != null)
+                {
+                    result.Add(subTree.Key);
+                }
+
+                foreach (var child in subTree.Children)
+                {
+                    queue.Enqueue(child);
+                }
+            }
+
+            return result;
         }
 
         public List<T> GetLongestPath()
         {
-            throw new NotImplementedException();
+            Tree<T> deepestNode = this.GetDeepestLeftomostNode();
+            Stack<T> stack = new Stack<T>();
+            Tree<T> currentNode = deepestNode;
+
+            while (currentNode != null)
+            {
+                stack.Push(currentNode.Key);
+                currentNode = currentNode.Parent;
+            }
+
+            return new List<T>(stack);
         }
 
         public List<List<T>> PathsWithGivenSum(int sum)
@@ -85,6 +136,67 @@
             {
                 this.Dfs(child, sb, depth + 2);
             }
+        }
+
+        private void Bfs(Tree<T> tree, List<T> result)
+        {
+            Queue<Tree<T>> queue = new Queue<Tree<T>>();
+
+            queue.Enqueue(tree);
+
+            while (queue.Count > 0)
+            {
+                Tree<T> subTree = queue.Dequeue();
+
+                if (subTree.Children.Count == 0)
+                {
+                    result.Add(subTree.Key);
+                }
+
+                foreach (var child in subTree.Children)
+                {
+                    queue.Enqueue(child);
+                }
+            }
+        }
+
+        private List<Tree<T>> OrderBfs(Tree<T> tree)
+        {
+            Queue<Tree<T>> queue = new Queue<Tree<T>>();
+            List<Tree<T>> nodes = new List<Tree<T>>();
+
+            queue.Enqueue(tree);
+
+            while (queue.Count > 0)
+            {
+                Tree<T> subTree = queue.Dequeue();
+
+                foreach (var child in subTree.Children)
+                {
+                    queue.Enqueue(child);
+
+                    if (child.Children.Count == 0)
+                    {
+                        nodes.Add(child);
+                    }
+                }
+            }
+
+            return nodes;
+        }
+
+        private int GetDepthOfNode(Tree<T> node)
+        {
+            int depth = 0;
+            Tree<T> current = node;
+
+            while (current.Parent != null)
+            {
+                depth++;
+                current = current.Parent;
+            }
+
+            return depth;
         }
     }
 }
