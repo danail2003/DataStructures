@@ -120,12 +120,34 @@
 
         public List<List<T>> PathsWithGivenSum(int sum)
         {
-            throw new NotImplementedException();
+            List<List<T>> result = new List<List<T>>();
+            List<T> currentPath = new List<T>
+            {
+                this.Key
+            };
+
+            int currentSum = Convert.ToInt32(this.Key);
+            this.GetPathsWithSum(this, result, currentPath, ref currentSum, sum);
+
+            return result;
         }
 
         public List<Tree<T>> SubTreesWithGivenSum(int sum)
         {
-            throw new NotImplementedException();
+            List<Tree<T>> result = new List<Tree<T>>();
+            List<Tree<T>> allNodes = this.SubTreeWithGivenSumBfs(this);
+
+            foreach (var child in allNodes)
+            {
+                int nodeSum = this.GetSubtreeSumDfs(child);
+
+                if (sum == nodeSum)
+                {
+                    result.Add(child);
+                }
+            }
+
+            return result;
         }
 
         private void Dfs(Tree<T> tree, StringBuilder sb, int depth)
@@ -197,6 +219,58 @@
             }
 
             return depth;
+        }
+
+        private void GetPathsWithSum(Tree<T> tree, List<List<T>> result, List<T> currentPath, ref int currentSum, int sum)
+        {
+            foreach (var child in tree.Children)
+            {
+                currentPath.Add(child.Key);
+                currentSum += Convert.ToInt32(child.Key);
+                this.GetPathsWithSum(child, result, currentPath, ref currentSum, sum);
+            }
+
+            if (sum == currentSum)
+            {
+                result.Add(new List<T>(currentPath));
+            }
+
+            currentSum -= Convert.ToInt32(tree.Key);
+            currentPath.RemoveAt(currentPath.Count - 1);
+        }
+
+        private int GetSubtreeSumDfs(Tree<T> child)
+        {
+            int currentSum = Convert.ToInt32(child.Key);
+            int childSum = 0;
+
+            foreach (var node in child.Children)
+            {
+                childSum += this.GetSubtreeSumDfs(node);
+            }
+
+            return currentSum + childSum;
+        }
+
+        private List<Tree<T>> SubTreeWithGivenSumBfs(Tree<T> tree)
+        {
+            Queue<Tree<T>> queue = new Queue<Tree<T>>();
+            List<Tree<T>> nodes = new List<Tree<T>>();
+
+            queue.Enqueue(tree);
+
+            while (queue.Count > 0)
+            {
+                Tree<T> subTree = queue.Dequeue();
+
+                foreach (var child in subTree.Children)
+                {
+                    queue.Enqueue(child);
+                    nodes.Add(child);
+                }
+            }
+
+            return nodes;
         }
     }
 }
