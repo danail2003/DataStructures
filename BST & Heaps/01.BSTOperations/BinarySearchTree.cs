@@ -128,17 +128,24 @@
                 throw new InvalidOperationException();
             }
 
-            Node<T> current = this.Root;
-            Node<T> previous = null;
-
-            while (current.LeftChild != null)
+            if (this.Root.LeftChild == null)
             {
-                current.Count--;
-                previous = current;
-                current = current.LeftChild;
+                this.Root = this.Root.RightChild;
             }
+            else
+            {
+                Node<T> current = this.Root;
+                Node<T> previous = null;
 
-            previous.LeftChild = current.RightChild;
+                while (current.LeftChild != null)
+                {
+                    current.Count--;
+                    previous = current;
+                    current = current.LeftChild;
+                }
+
+                previous.LeftChild = current.RightChild;
+            }
         }
 
         public void DeleteMax()
@@ -148,17 +155,24 @@
                 throw new InvalidOperationException();
             }
 
-            Node<T> current = this.Root;
-            Node<T> previous = null;
-
-            while (current.RightChild != null)
+            if (this.Root.RightChild == null)
             {
-                current.Count--;
-                previous = current;
-                current = current.RightChild;
+                this.Root = this.Root.LeftChild;
             }
+            else
+            {
+                Node<T> current = this.Root;
+                Node<T> previous = null;
 
-            previous.RightChild = current.LeftChild;
+                while (current.RightChild != null)
+                {
+                    current.Count--;
+                    previous = current;
+                    current = current.RightChild;
+                }
+
+                previous.RightChild = current.LeftChild;
+            }   
         }
 
         public int GetRank(T element)
