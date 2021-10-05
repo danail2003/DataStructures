@@ -7,9 +7,17 @@
             this.Value = value;
             this.LeftChild = leftChild;
             this.RightChild = rightChild;
+            this.Count = 1;
+
+            if (this.LeftChild != null || this.RightChild != null)
+            {
+                this.Count++;
+            }
         }
 
         public T Value { get; set; }
+
+        public int Count { get; set; }
 
         public Node<T> LeftChild { get; set; }
 

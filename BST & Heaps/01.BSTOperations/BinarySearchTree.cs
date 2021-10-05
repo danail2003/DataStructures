@@ -17,7 +17,7 @@
 
         public Node<T> Root { get; private set; }
 
-        public int Count => throw new NotImplementedException();
+        public int Count => this.Root.Count;
 
         public Node<T> LeftChild { get; private set; }
 
@@ -92,25 +92,78 @@
 
         public List<T> Range(T lower, T upper)
         {
-            throw new NotImplementedException();
+            List<T> result = new List<T>();
+            Queue<Node<T>> queue = new Queue<Node<T>>();
+            queue.Enqueue(this.Root);
+
+            while (queue.Count > 0)
+            {
+                Node<T> current = queue.Dequeue();
+
+                if (this.IsGreater(upper, current.Value) && this.IsLess(lower, current.Value)
+                    || this.AreEqual(lower, current.Value)
+                    || this.AreEqual(upper, current.Value))
+                {
+                    result.Add(current.Value);
+                }
+
+                if (current.LeftChild != null)
+                {
+                    queue.Enqueue(current.LeftChild);
+                }
+
+                if (current.RightChild != null)
+                {
+                    queue.Enqueue(current.RightChild);
+                }
+            }
+
+            return result;
         }
 
         public void DeleteMin()
         {
-            if (this.Count == 0)
+            if (this.Root == null)
             {
                 throw new InvalidOperationException();
             }
+
+            Node<T> current = this.Root;
+            Node<T> previous = null;
+
+            while (current.LeftChild != null)
+            {
+                current.Count--;
+                previous = current;
+                current = current.LeftChild;
+            }
+
+            previous.LeftChild = current.RightChild;
         }
 
         public void DeleteMax()
         {
-            throw new NotImplementedException();
+            if (this.Root == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            Node<T> current = this.Root;
+            Node<T> previous = null;
+
+            while (current.RightChild != null)
+            {
+                current.Count--;
+                previous = current;
+                current = current.RightChild;
+            }
+
+            previous.RightChild = current.LeftChild;
         }
 
         public int GetRank(T element)
         {
-            throw new NotImplementedException();
+            return this.GetRankDfs(this.Root, element);
         }
 
         private void InsertElementDfs(Node<T> current, Node<T> previous, Node<T> toInsert)
@@ -142,10 +195,12 @@
             if (this.IsLess(toInsert.Value, current.Value))
             {
                 this.InsertElementDfs(current.LeftChild, current, toInsert);
+                current.Count++;
             }
             else if (this.IsGreater(toInsert.Value, current.Value))
             {
                 this.InsertElementDfs(current.RightChild, current, toInsert);
+                current.Count++;
             }
         }
 
@@ -182,6 +237,30 @@
                 this.Copy(current.LeftChild);
                 this.Copy(current.RightChild);
             }
+        }
+
+        private int GetRankDfs(Node<T> current, T element)
+        {
+            if (current == null)
+            {
+                return 0;
+            }
+
+            if (this.IsLess(element, current.Value))
+            {
+                return this.GetRankDfs(current.LeftChild, element);
+            }
+            else if (this.AreEqual(element, current.Value))
+            {
+                return this.GetNodeCount(current);
+            }
+
+            return this.GetNodeCount(current.LeftChild) + 1 + this.GetRankDfs(current.RightChild, element);
+        }
+
+        private int GetNodeCount(Node<T> current)
+        {
+            return current == null ? 0 : current.Count;
         }
     }
 }
