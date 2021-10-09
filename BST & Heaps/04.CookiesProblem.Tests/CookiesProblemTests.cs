@@ -13,6 +13,13 @@ namespace _04.CookiesProblem.Tests
         }
 
         [Test]
+        public void TestSolveHasSolution2()
+        {
+            int result = new CookiesProblem().Solve(7, new int[] { 12, 6, 3, 9, 15, 13 });
+            Assert.AreEqual(1, result);
+        }
+
+        [Test]
         public void TestSolveHasNoSolution()
         {
             int result = new CookiesProblem().Solve(10, new int[] { 1, 1, 1, 1 });
