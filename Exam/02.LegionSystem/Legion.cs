@@ -68,27 +68,12 @@
         {
             this.EnsureNotEmpty();
 
-            IEnemy enemy = null;
-
-            int maxAttackSpeed = int.MinValue;
-
-            for (int i = 0; i < this.Size; i++)
-            {
-                if (this.enemies[i].AttackSpeed > maxAttackSpeed)
-                {
-                    maxAttackSpeed = this.enemies[i].AttackSpeed;
-                    enemy = this.enemies[i];
-                }
-            }
-
-            return enemy;
+            return this.enemies.GetFirst();
         }
 
         public IEnemy[] GetOrderedByHealth()
         {
-            OrderedBag<IEnemy> enemies = new OrderedBag<IEnemy>(this.enemies, CompareByHealth);
-
-            return enemies.ToArray();
+            return this.enemies.OrderByDescending(x => x.Health).ToArray();
         }
 
         public List<IEnemy> GetSlower(int speed)
@@ -110,57 +95,21 @@
         {
             this.EnsureNotEmpty();
 
-            int leastAttackSpeed = int.MaxValue;
-            IEnemy enemy = null;
-
-            for (int i = 0; i < this.Size; i++)
-            {
-                if (this.enemies[i].AttackSpeed < leastAttackSpeed)
-                {
-                    leastAttackSpeed = this.enemies[i].AttackSpeed;
-                    enemy = this.enemies[i];
-                }
-            }
-
-            return enemy;
+            return this.enemies.GetLast();
         }
 
         public void ShootFastest()
         {
             this.EnsureNotEmpty();
 
-            int fastestAttackSpeed = int.MinValue;
-            IEnemy enemy = null;
-
-            for (int i = 0; i < this.Size; i++)
-            {
-                if (this.enemies[i].AttackSpeed > fastestAttackSpeed)
-                {
-                    fastestAttackSpeed = this.enemies[i].AttackSpeed;
-                    enemy = this.enemies[i];
-                }
-            }
-
-            this.enemies.Remove(enemy);
+            this.enemies.RemoveFirst();
         }
 
         public void ShootSlowest()
         {
             this.EnsureNotEmpty();
 
-            int slowesAttackSpeed = int.MaxValue;
-            IEnemy enemy = null;
-
-            for (int i = 0; i < this.Size; i++)
-            {
-                if (this.enemies[i].AttackSpeed < slowesAttackSpeed)
-                {
-                    slowesAttackSpeed = this.enemies[i].AttackSpeed;
-                    enemy = this.enemies[i];
-                }
-            }
-
-            this.enemies.Remove(enemy);
+            this.enemies.RemoveLast();
         }
 
         private void EnsureNotEmpty()
@@ -169,11 +118,6 @@
             {
                 throw new InvalidOperationException("Legion has no enemies!");
             }
-        }
-
-        private int CompareByHealth(IEnemy first, IEnemy second)
-        {
-            return second.Health - first.Health;
         }
     }
 }
