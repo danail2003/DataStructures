@@ -7,28 +7,45 @@
 
     public class Legion : IArmy
     {
-        private OrderedSet<IEnemy> enemies;
+        private readonly OrderedSet<IEnemy> enemies;
 
         public Legion()
         {
             this.enemies = new OrderedSet<IEnemy>();
         }
 
-        public int Size => throw new NotImplementedException();
+        public int Size => this.enemies.Count;
 
         public bool Contains(IEnemy enemy)
         {
-            throw new NotImplementedException();
+            int searchedWeapon = this.enemies.IndexOf(enemy);
+
+            if (searchedWeapon != -1)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public void Create(IEnemy enemy)
         {
-            throw new NotImplementedException();
+            this.enemies.Add(enemy);
         }
 
         public IEnemy GetByAttackSpeed(int speed)
         {
-            throw new NotImplementedException();
+            IEnemy enemy = null;
+
+            for (int i = 0; i < this.Size; i++)
+            {
+                if (this.enemies[i].AttackSpeed == speed)
+                {
+                    enemy = this.enemies[i];
+                }
+            }
+
+            return enemy;
         }
 
         public List<IEnemy> GetFaster(int speed)
@@ -38,7 +55,22 @@
 
         public IEnemy GetFastest()
         {
-            throw new NotImplementedException();
+            this.EnsureNotEmpty();
+
+            IEnemy enemy = null;
+
+            int maxAttackSpeed = int.MinValue;
+
+            for (int i = 0; i < this.Size; i++)
+            {
+                if (this.enemies[i].AttackSpeed > maxAttackSpeed)
+                {
+                    maxAttackSpeed = this.enemies[i].AttackSpeed;
+                    enemy = this.enemies[i];
+                }
+            }
+
+            return enemy;
         }
 
         public IEnemy[] GetOrderedByHealth()
@@ -64,6 +96,14 @@
         public void ShootSlowest()
         {
             throw new NotImplementedException();
+        }
+
+        private void EnsureNotEmpty()
+        {
+            if (this.Size == 0)
+            {
+                throw new InvalidOperationException("Legion has no enemies!");
+            }
         }
     }
 }

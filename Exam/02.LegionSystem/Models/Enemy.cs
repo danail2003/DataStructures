@@ -1,6 +1,5 @@
 ﻿namespace _02.LegionSystem.Models
 {
-    using System;
     using _02.LegionSystem.Interfaces;
 
     public class Enemy : IEnemy
@@ -17,7 +16,9 @@
 
         public int CompareTo(object obj)
         {
-            throw new NotImplementedException();
+            IEnemy enemy = (IEnemy)obj;
+
+            return enemy.AttackSpeed - this.AttackSpeed;
         }
     }
 }
